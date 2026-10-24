@@ -18,6 +18,19 @@
 # Usage: summarize-work.sh [options] [START [END]]
 #        Run with --help for all options.
 
+# Re-run under bash when started some other way (`sh summarize-work.sh`,
+# `zsh summarize-work.sh`, ...). macOS `sh` is bash in POSIX mode, which rejects
+# some of the syntax below, so it gets the same treatment. Kept POSIX-only so
+# any shell can get this far.
+if [ -z "${SUMMARIZE_WORK_REEXEC:-}" ] &&
+   { [ -z "${BASH_VERSION:-}" ] ||
+     case ":${SHELLOPTS:-}:" in *:posix:*) true ;; *) false ;; esac; }; then
+  command -v bash >/dev/null 2>&1 ||
+    { echo "summarize-work.sh: bash is required but was not found" >&2; exit 1; }
+  unset POSIXLY_CORRECT
+  SUMMARIZE_WORK_REEXEC=1 exec bash "$0" "$@"
+fi
+
 set -eo pipefail
 
 PROG=$(basename "$0")

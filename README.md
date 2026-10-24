@@ -33,7 +33,7 @@ The sentences come from fixed rules and explicitly
 ## Requirements
 
 - `git`
-- `bash` 3.2 or newer (the version that ships with macOS is fine)
+- `bash` 3.2 or newer (the version that ships with macOS is fine). You can still start the script with `sh`; see [Setup](#setup).
 - Standard `awk`, `sort`, `date` and `find`. Both the macOS/BSD and Linux/GNU versions work.
 
 ## Setup
@@ -44,6 +44,18 @@ chmod +x summarize-work.sh
 
 You can also copy or link it somewhere on your `PATH`, for example
 `ln -s "$PWD/summarize-work.sh" /usr/local/bin/summarize-work`.
+
+You can start it whichever way you like. These all do the same thing:
+
+```sh
+./summarize-work.sh --yesterday
+bash summarize-work.sh --yesterday
+sh summarize-work.sh --yesterday
+```
+
+The script is written for bash. If you start it with `sh`, `zsh` or another shell, it
+re-runs itself under `bash` automatically, so `bash` needs to be installed (it is on macOS
+and nearly every Linux system).
 
 ## Usage
 
@@ -94,6 +106,27 @@ Both ends of the range are included, so each day counts from 00:00:00 to 23:59:5
 | `--dates`           | Add the date to each bullet, e.g. `Fixed null totals (PROJ-91) — Oct 23`. |
 | `--no-totals`       | Leave out the closing "Altogether that's…" line. |
 | `-h, --help`        | Show the built-in help. |
+
+### Where the output goes
+
+By default the summary is printed to the terminal (stdout). Nothing is saved unless you ask.
+
+To save it to a file, use `-o` / `--output`. The summary then goes **only** to that file, not
+the terminal, and an existing file at that path is overwritten:
+
+```sh
+./summarize-work.sh --yesterday -o ~/reports/yesterday.md
+```
+
+Since it's ordinary stdout, you can also redirect or pipe it yourself:
+
+```sh
+./summarize-work.sh --this-week > week.md          # save to a file
+./summarize-work.sh --this-week | pbcopy           # copy to the clipboard (macOS)
+./summarize-work.sh --this-week | tee week.md      # print and save at once
+```
+
+Errors and warnings go to stderr, so they never end up in the saved summary.
 
 ### Examples
 
